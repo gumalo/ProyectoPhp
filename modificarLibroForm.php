@@ -99,7 +99,21 @@
                                                         <?php
                                                         require ("conectar.php");
 
-                                                        $consulta = "SELECT `autor`.`id`, `nombre`, `apellidos`, `fechaNac`, `libro`.`id` AS 'idLibro' FROM `autor` LEFT JOIN `libro` ON `libro`.`idAutor` = `autor`.`id` GROUP BY `autor`.`id`";
+                                                        $consulta = "SELECT `idAutor` FROM `libro` WHERE `id` = " . $_REQUEST['radio'];
+
+                                                        if (!$resultado = $mysqli->query($consulta))
+                                                        {
+                                                            echo "Error en la ejecución debido a: <br>";
+                                                            echo "query: ". $consulta;
+                                                            echo "Num error: ".$mysqli->errno." <br>";
+                                                            echo "Error: ".$mysqli->error." <br>";
+                                                            die("Fallo");
+                                                        }
+
+                                                        $idAutor = $resultado->fetch_assoc();
+
+
+                                                        $consulta = "SELECT * FROM `autor`";
 
                                                         if (!$resultado = $mysqli->query($consulta))
                                                         {
@@ -117,7 +131,7 @@
                                                             $fila=$resultado->fetch_assoc();
                                                             echo ("<tr>");
 
-                                                            if ($_REQUEST['radio'] == $fila["idLibro"])
+                                                            if ($idAutor["idAutor"] == $fila["id"])
                                                                 echo ("<td><label><input type='radio' name='radio' id='seleccion".$i."' value='".$fila["id"]."' checked='checked' /></label></td>");
                                                             else
                                                                 echo ("<td><label><input type='radio' name='radio' id='seleccion".$i."' value='".$fila["id"]."' /></label></td>");
